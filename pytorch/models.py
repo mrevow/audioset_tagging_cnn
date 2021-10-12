@@ -174,14 +174,14 @@ class Cnn14(nn.Module):
         self.conv_block6 = ConvBlock(in_channels=1024, out_channels=2048)
 
         self.fc1 = nn.Linear(2048, 2048, bias=True)
-        self.fc_audioset = nn.Linear(2048, classes_num, bias=True)
+        # self.fc_audioset = nn.Linear(2048, classes_num, bias=True)
         
         self.init_weight()
 
     def init_weight(self):
         init_bn(self.bn0)
         init_layer(self.fc1)
-        init_layer(self.fc_audioset)
+        # init_layer(self.fc_audioset)
  
     def forward(self, input, mixup_lambda=None):
         """
