@@ -440,7 +440,7 @@ class Cnn6(nn.Module):
         self.init_weight()
 
     def init_weight(self):
-        init_bn(self.bn0)
+        # init_bn(self.bn0)
         init_layer(self.fc1)
         # init_layer(self.fc_audioset)
  
@@ -454,10 +454,11 @@ class Cnn6(nn.Module):
         # x = x.transpose(1, 3)
         # x = self.bn0(x)
         # x = x.transpose(1, 3)
-        x = input.transpose(2, 3)        
 
-        if self.training:
-            x = self.spec_augmenter(x)
+        # if self.training:
+        #     x = self.spec_augmenter(x)
+
+        x = input.transpose(2, 3)        
 
         # Mixup on spectrogram
         if self.training and mixup_lambda is not None:
