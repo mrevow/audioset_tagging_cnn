@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torchlibrosa.stft import Spectrogram, LogmelFilterBank
 from torchlibrosa.augmentation import SpecAugmentation
 
-from pytorch_utils import do_mixup, interpolate, pad_framewise_output
+from audioset_tagging_cnn.pytorch.pytorch_utils import do_mixup, interpolate, pad_framewise_output
  
 
 def init_layer(layer):
@@ -163,7 +163,8 @@ class Cnn14(nn.Module):
         self.spec_augmenter = SpecAugmentation(time_drop_width=64, time_stripes_num=2, 
             freq_drop_width=8, freq_stripes_num=2)
 
-        self.bn0 = nn.BatchNorm2d(64)
+        self.bn0 = nn.BatchNorm2d(mel_bins)
+        # self.bn0 = nn.BatchNorm2d(64)
 
         self.conv_block1 = ConvBlock(in_channels=1, out_channels=64)
         self.conv_block2 = ConvBlock(in_channels=64, out_channels=128)
@@ -304,11 +305,12 @@ class Cnn14_no_specaug(nn.Module):
         x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu_(self.fc1(x))
         embedding = F.dropout(x, p=0.5, training=self.training)
-        clipwise_output = torch.sigmoid(self.fc_audioset(x))
+        return embedding
+        # clipwise_output = torch.sigmoid(self.fc_audioset(x))
         
-        output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
+        # output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
 
-        return output_dict
+        # return output_dict
 
 
 class Cnn14_no_dropout(nn.Module):
@@ -474,11 +476,12 @@ class Cnn6(nn.Module):
         x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu_(self.fc1(x))
         embedding = F.dropout(x, p=0.5, training=self.training)
-        clipwise_output = torch.sigmoid(self.fc_audioset(x))
+        return embedding
+        # clipwise_output = torch.sigmoid(self.fc_audioset(x))
         
-        output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
+        # output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
 
-        return output_dict
+        # return output_dict
 
 
 class Cnn10(nn.Module):
@@ -559,11 +562,12 @@ class Cnn10(nn.Module):
         x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu_(self.fc1(x))
         embedding = F.dropout(x, p=0.5, training=self.training)
-        clipwise_output = torch.sigmoid(self.fc_audioset(x))
+        return embedding
+        # clipwise_output = torch.sigmoid(self.fc_audioset(x))
         
-        output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
+        # output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
 
-        return output_dict
+        # return output_dict
 
 
 def _resnet_conv3x3(in_planes, out_planes):
@@ -1413,11 +1417,12 @@ class MobileNetV1(nn.Module):
         x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu_(self.fc1(x))
         embedding = F.dropout(x, p=0.5, training=self.training)
-        clipwise_output = torch.sigmoid(self.fc_audioset(x))
+        return embedding
+        # clipwise_output = torch.sigmoid(self.fc_audioset(x))
         
-        output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
+        # output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
 
-        return output_dict
+        # return output_dict
 
 
 class InvertedResidual(nn.Module):
@@ -1592,14 +1597,15 @@ class MobileNetV2(nn.Module):
         (x1, _) = torch.max(x, dim=2)
         x2 = torch.mean(x, dim=2)
         x = x1 + x2
-        # x = F.dropout(x, p=0.5, training=self.training)
+        x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu_(self.fc1(x))
         embedding = F.dropout(x, p=0.5, training=self.training)
-        clipwise_output = torch.sigmoid(self.fc_audioset(x))
+        return embedding
+        # clipwise_output = torch.sigmoid(self.fc_audioset(x))
         
-        output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
+        # output_dict = {'clipwise_output': clipwise_output, 'embedding': embedding}
 
-        return output_dict
+        # return output_dict
 
 
 class LeeNetConvBlock(nn.Module):
