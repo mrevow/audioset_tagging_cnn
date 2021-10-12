@@ -434,14 +434,14 @@ class Cnn6(nn.Module):
         self.conv_block4 = ConvBlock5x5(in_channels=256, out_channels=512)
 
         self.fc1 = nn.Linear(512, 512, bias=True)
-        self.fc_audioset = nn.Linear(512, classes_num, bias=True)
+        # self.fc_audioset = nn.Linear(512, classes_num, bias=True)
         
         self.init_weight()
 
     def init_weight(self):
         init_bn(self.bn0)
         init_layer(self.fc1)
-        init_layer(self.fc_audioset)
+        # init_layer(self.fc_audioset)
  
     def forward(self, input, mixup_lambda=None):
         """
@@ -520,14 +520,14 @@ class Cnn10(nn.Module):
         self.conv_block4 = ConvBlock(in_channels=256, out_channels=512)
 
         self.fc1 = nn.Linear(512, 512, bias=True)
-        self.fc_audioset = nn.Linear(512, classes_num, bias=True)
+        # self.fc_audioset = nn.Linear(512, classes_num, bias=True)
         
         self.init_weight()
 
     def init_weight(self):
         init_bn(self.bn0)
         init_layer(self.fc1)
-        init_layer(self.fc_audioset)
+        # init_layer(self.fc_audioset)
  
     def forward(self, input, mixup_lambda=None):
         """
@@ -1382,14 +1382,14 @@ class MobileNetV1(nn.Module):
             conv_dw(1024, 1024, 1))
 
         self.fc1 = nn.Linear(1024, 1024, bias=True)
-        self.fc_audioset = nn.Linear(1024, classes_num, bias=True)
+        # self.fc_audioset = nn.Linear(1024, classes_num, bias=True)
 
         self.init_weights()
 
     def init_weights(self):
         init_bn(self.bn0)
         init_layer(self.fc1)
-        init_layer(self.fc_audioset)
+        # init_layer(self.fc_audioset)
  
     def forward(self, input, mixup_lambda=None):
         """
@@ -1564,14 +1564,14 @@ class MobileNetV2(nn.Module):
         self.features = nn.Sequential(*self.features)
 
         self.fc1 = nn.Linear(1280, 1024, bias=True)
-        self.fc_audioset = nn.Linear(1024, classes_num, bias=True)
+        # self.fc_audioset = nn.Linear(1024, classes_num, bias=True)
         
         self.init_weight()
 
     def init_weight(self):
         init_bn(self.bn0)
         init_layer(self.fc1)
-        init_layer(self.fc_audioset)
+        # init_layer(self.fc_audioset)
  
     def forward(self, input, mixup_lambda=None):
         """
