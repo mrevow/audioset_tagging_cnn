@@ -69,7 +69,7 @@ class ConvBlock(nn.Module):
 
 
 class ConvBlock5x5(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, logger, in_channels, out_channels):
         
         super(ConvBlock5x5, self).__init__()
         
@@ -81,6 +81,11 @@ class ConvBlock5x5(nn.Module):
         self.bn1 = nn.BatchNorm2d(out_channels)
 
         self.init_weight()
+        self.in_channels = in_channels
+        self.logger = logger
+        self.iter = 0
+        self.name_mean = 'BN_Mean_{}'.format(in_channels)
+        self.name_var = 'BN_Var_{}'.format(in_channels)        
         
     def init_weight(self):
         init_layer(self.conv1)
@@ -90,7 +95,38 @@ class ConvBlock5x5(nn.Module):
     def forward(self, input, pool_size=(2, 2), pool_type='avg'):
         
         x = input
-        x = F.relu_(self.bn1(self.conv1(x)))
+        inpIsNan =  torch.any(torch.isnan(input))
+
+        x = self.conv1(x)
+        ww = self.conv1.weight
+
+
+        isNan = torch.isnan(x)
+        if  torch.any(isNan):
+          ww = self.conv1.weight
+          self.logger.info("ConvBlock5x5 InptSize {}   Conv weight {} {} {} mn {} mx {} shape {} mean {} var {} Input  {} mean {} var {} mn {} mx {} ".format(self.in_channels, ww.mean(), ww.std(), ww.min(), ww.max(),
+          ww.shape, x.shape, x.mean(), x.var(), input.shape, input.mean(), input.var(), input.min(), input.max()))
+
+        # ww = self.conv1.weight
+        # self.logger.info("ConvBlock5x5 InptSize {}   Conv weight {} {} {} shape {} mean {} var {} Input  {} mean {} var {} ".format(self.in_channels, ww.mean(), ww.std(), ww.shape, x.shape, x.mean(), x.var(), input.shape, input.mean(), input.var()))
+        self.logger.log_row(name=self.name_mean, iter=self.iter, val=float(self.bn1.running_var.mean().item()), description="runningMean")
+        self.logger.log_row(name=self.name_var, iter=self.iter, val=float(self.bn1.running_var.min().item()), description="runningMin")
+        # self.logger.info("{} iter {} RunVar min {} mean {} std {} Inpt {} {} {} X {} {} {}".format(self.name_mean, self.iter, float(self.bn1.running_var.min().item()), float(self.bn1.running_var.mean().item()), self.bn1.running_var.std(), 
+        #   input.shape, input.mean(), input.var(), x.shape, x.mean(), x.var() ))
+        self.iter += 1
+
+        x = self.bn1(x)
+        isNan = torch.isnan(x)
+        if  torch.any(isNan) and not inpIsNan:
+          ww = self.bn1.weight
+          self.logger.info("ConvBlock5x5 {} bn1 Inpt {} BN1 weight {} {} {} shape {} mean {} var {} ".format(self.name_mean, self.in_channels, ww.mean(), ww.std(), ww.shape, x.shape, x.mean(), x.var()))
+
+        x = F.relu_(x)
+
+        isNan = torch.isnan(x)
+        # if  torch.any(isNan) and not inpIsNan:
+        #   self.logger.info("ConvBlock5x5 relu {} shape {} mean {} var {} ".format(self.bn1, input.shape, x.mean(), x.var()))
+
         if pool_type == 'max':
             x = F.max_pool2d(x, kernel_size=pool_size)
         elif pool_type == 'avg':
@@ -401,7 +437,7 @@ class Cnn14_no_dropout(nn.Module):
 
 
 class Cnn6(nn.Module):
-    def __init__(self, sample_rate, window_size, hop_size, mel_bins, fmin, 
+    def __init__(self, logger, sample_rate, window_size, hop_size, mel_bins, fmin, 
         fmax, classes_num):
         
         super(Cnn6, self).__init__()
@@ -428,11 +464,13 @@ class Cnn6(nn.Module):
         #     freq_drop_width=8, freq_stripes_num=2)
 
         # self.bn0 = nn.BatchNorm2d(64)
+        self.logger = logger
+        # self.bn0 = nn.BatchNorm2d(mel_bins)
 
-        self.conv_block1 = ConvBlock5x5(in_channels=1, out_channels=64)
-        self.conv_block2 = ConvBlock5x5(in_channels=64, out_channels=128)
-        self.conv_block3 = ConvBlock5x5(in_channels=128, out_channels=256)
-        self.conv_block4 = ConvBlock5x5(in_channels=256, out_channels=512)
+        self.conv_block1 = ConvBlock5x5(logger, in_channels=1, out_channels=64)
+        self.conv_block2 = ConvBlock5x5(logger, in_channels=64, out_channels=128)
+        self.conv_block3 = ConvBlock5x5(logger, in_channels=128, out_channels=256)
+        self.conv_block4 = ConvBlock5x5(logger, in_channels=256, out_channels=512)
 
         self.fc1 = nn.Linear(512, 512, bias=True)
         # self.fc_audioset = nn.Linear(512, classes_num, bias=True)
@@ -458,7 +496,12 @@ class Cnn6(nn.Module):
         # if self.training:
         #     x = self.spec_augmenter(x)
 
-        x = input.transpose(2, 3)        
+        x = input
+        isNan = torch.isnan(x)
+        if  torch.any(isNan):
+            self.logger.info("Cnn6 input x is Nan shape {} mean {} var {} ".format(input.shape, input.mean(), input.var()))
+
+        # x = input.transpose(2, 3)        
 
         # Mixup on spectrogram
         if self.training and mixup_lambda is not None:
