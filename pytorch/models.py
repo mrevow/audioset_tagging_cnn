@@ -173,7 +173,7 @@ class AttBlock(nn.Module):
 
 
 class Cnn14(nn.Module):
-    def __init__(self, sample_rate, window_size, hop_size, mel_bins, fmin, 
+    def __init__(self, logger, sample_rate, window_size, hop_size, mel_bins, fmin, 
         fmax, classes_num):
         
         super(Cnn14, self).__init__()
@@ -184,6 +184,7 @@ class Cnn14(nn.Module):
         ref = 1.0
         amin = 1e-10
         top_db = None
+        self.logger = logger
 
         # Spectrogram extractor
         # self.spectrogram_extractor = Spectrogram(n_fft=window_size, hop_length=hop_size, 
@@ -232,7 +233,8 @@ class Cnn14(nn.Module):
         
         # if self.training:
         #     x = self.spec_augmenter(x)
-        x = input.transpose(2, 3)
+        # x = input.transpose(2, 3)
+        x = input
 
         # Mixup on spectrogram
         if self.training and mixup_lambda is not None:
@@ -532,7 +534,7 @@ class Cnn6(nn.Module):
 
 
 class Cnn10(nn.Module):
-    def __init__(self, sample_rate, window_size, hop_size, mel_bins, fmin, 
+    def __init__(self, logger, sample_rate, window_size, hop_size, mel_bins, fmin, 
         fmax, classes_num):
         
         super(Cnn10, self).__init__()
@@ -543,6 +545,7 @@ class Cnn10(nn.Module):
         ref = 1.0
         amin = 1e-10
         top_db = None
+        self.logger = logger 
 
         # Spectrogram extractor
         # self.spectrogram_extractor = Spectrogram(n_fft=window_size, hop_length=hop_size, 
@@ -592,7 +595,8 @@ class Cnn10(nn.Module):
         # # Mixup on spectrogram
         # if self.training and mixup_lambda is not None:
         #     x = do_mixup(x, mixup_lambda)
-        x = input.transpose(2, 3)
+        # x = input.transpose(2, 3)
+        x = input
         
         x = self.conv_block1(x, pool_size=(2, 2), pool_type='avg')
         x = F.dropout(x, p=0.2, training=self.training)
@@ -1355,7 +1359,7 @@ class Cnn14_emb32(nn.Module):
 
 
 class MobileNetV1(nn.Module):
-    def __init__(self, sample_rate, window_size, hop_size, mel_bins, fmin, 
+    def __init__(self, logger, sample_rate, window_size, hop_size, mel_bins, fmin, 
         fmax, classes_num):
         
         super(MobileNetV1, self).__init__()
@@ -1366,6 +1370,7 @@ class MobileNetV1(nn.Module):
         ref = 1.0
         amin = 1e-10
         top_db = None
+        self.logger = logger
 
         # Spectrogram extractor
         # self.spectrogram_extractor = Spectrogram(n_fft=window_size, hop_length=hop_size, 
@@ -1456,8 +1461,8 @@ class MobileNetV1(nn.Module):
         # if self.training and mixup_lambda is not None:
         #     x = do_mixup(x, mixup_lambda)
 
-        x = input.transpose(2, 3)
-        
+        # x = input.transpose(2, 3)
+        x = input
         x = self.features(x)
         x = torch.mean(x, dim=3)
         
@@ -1528,7 +1533,7 @@ class InvertedResidual(nn.Module):
 
 
 class MobileNetV2(nn.Module):
-    def __init__(self, sample_rate, window_size, hop_size, mel_bins, fmin, 
+    def __init__(self, logger, sample_rate, window_size, hop_size, mel_bins, fmin, 
         fmax, classes_num):
         
         super(MobileNetV2, self).__init__()
@@ -1539,6 +1544,7 @@ class MobileNetV2(nn.Module):
         ref = 1.0
         amin = 1e-10
         top_db = None
+        self.logger = logger
 
         # Spectrogram extractor
         # self.spectrogram_extractor = Spectrogram(n_fft=window_size, hop_length=hop_size, 
@@ -1639,8 +1645,9 @@ class MobileNetV2(nn.Module):
         # # Mixup on spectrogram
         # if self.training and mixup_lambda is not None:
         #     x = do_mixup(x, mixup_lambda)
-        x = input.transpose(2, 3)
+        # x = input.transpose(2, 3)
         
+        x = input
         x = self.features(x)
         
         x = torch.mean(x, dim=3)
