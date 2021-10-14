@@ -465,7 +465,7 @@ class Cnn6(nn.Module):
 
         # self.bn0 = nn.BatchNorm2d(64)
         self.logger = logger
-        self.bn0 = nn.BatchNorm2d(mel_bins)
+        # self.bn0 = nn.BatchNorm2d(mel_bins)
 
         self.conv_block1 = ConvBlock5x5(logger, in_channels=1, out_channels=64)
         self.conv_block2 = ConvBlock5x5(logger, in_channels=64, out_channels=128)
@@ -478,7 +478,7 @@ class Cnn6(nn.Module):
         self.init_weight()
 
     def init_weight(self):
-        init_bn(self.bn0)
+        # init_bn(self.bn0)
         init_layer(self.fc1)
         # init_layer(self.fc_audioset)
  
