@@ -109,8 +109,8 @@ class ConvBlock5x5(nn.Module):
 
         # ww = self.conv1.weight
         # self.logger.info("ConvBlock5x5 InptSize {}   Conv weight {} {} {} shape {} mean {} var {} Input  {} mean {} var {} ".format(self.in_channels, ww.mean(), ww.std(), ww.shape, x.shape, x.mean(), x.var(), input.shape, input.mean(), input.var()))
-        self.logger.log_row(name=self.name_mean, iter=self.iter, val=float(self.bn1.running_var.mean().item()), description="runningMean")
-        self.logger.log_row(name=self.name_var, iter=self.iter, val=float(self.bn1.running_var.min().item()), description="runningMin")
+        # self.logger.log_row(name=self.name_mean, iter=self.iter, val=float(self.bn1.running_var.mean().item()), description="runningMean")
+        # self.logger.log_row(name=self.name_var, iter=self.iter, val=float(self.bn1.running_var.min().item()), description="runningMin")
         # self.logger.info("{} iter {} RunVar min {} mean {} std {} Inpt {} {} {} X {} {} {}".format(self.name_mean, self.iter, float(self.bn1.running_var.min().item()), float(self.bn1.running_var.mean().item()), self.bn1.running_var.std(), 
         #   input.shape, input.mean(), input.var(), x.shape, x.mean(), x.var() ))
         self.iter += 1
